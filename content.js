@@ -1,10 +1,13 @@
 let collapsed = false;
+let observer = null;
+let debounceTimer = null;
 
 function getMessages() {
     return document.querySelectorAll('[data-message-author-role]');
 }
 
 function collapseMessages() {
+    if (collapsed) return;
 
     const messages = getMessages();
 
@@ -17,12 +20,10 @@ function collapseMessages() {
     }
 
     collapsed = true;
-
     updateCounter();
 }
 
 function expandMessages() {
-
     const messages = getMessages();
 
     messages.forEach(m => {
@@ -30,18 +31,14 @@ function expandMessages() {
     });
 
     collapsed = false;
-
     updateCounter();
 }
 
 function updateCounter() {
-
     const counter = document.getElementById("chat-counter");
-
     if (!counter) return;
 
     const messages = getMessages();
-
     counter.innerText = `Messages: ${messages.length}`;
 }
 
@@ -72,33 +69,45 @@ function createPanel() {
     updateCounter();
 }
 
+function debounceOptimize() {
+    clearTimeout(debounceTimer);
+
+    debounceTimer = setTimeout(() => {
+        updateCounter();
+        collapseMessages();
+    }, 500); // wait 500ms after changes
+}
+
 function observeChat() {
 
-    const target = document.body;
+    if (observer) return;
 
-    const observer = new MutationObserver(() => {
+    // Try to find chat container (more stable than body)
+    const chatContainer = document.querySelector("main");
 
-        updateCounter();
+    if (!chatContainer) {
+        console.log("Chat container not found, retrying...");
+        setTimeout(observeChat, 2000);
+        return;
+    }
 
-        if (!collapsed) {
-            collapseMessages();
-        }
-
+    observer = new MutationObserver(() => {
+        debounceOptimize();
     });
 
-    observer.observe(target, {
+    observer.observe(chatContainer, {
         childList: true,
         subtree: true
     });
+
+    console.log("Observer attached safely");
 }
 
 function init() {
-
     createPanel();
-
     observeChat();
-
     updateCounter();
 }
 
-setTimeout(init, 3000);
+// Delay init so page fully loads
+setTimeout(init, 4000);
