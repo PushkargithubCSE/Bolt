@@ -13,7 +13,8 @@ function collapseMessages() {
 
     console.log("Total messages:",messages.length); //added logs for debugging
 
-    if (messages.length < 60) {
+    if (messages.length < 10) {      //reduced the number of messages from 60 to 10
+        
         console.log("Not enough messages to collapse");
         return;
     };
