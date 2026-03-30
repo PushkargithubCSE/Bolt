@@ -3,15 +3,20 @@ let observer = null;
 let debounceTimer = null;
 
 function getMessages() {
-    return document.querySelectorAll('[data-message-author-role]');
+    return document.querySelectorAll('[data-message-author-role], article');  // searching article tags also 
 }
 
 function collapseMessages() {
-    if (collapsed) return;
-
+    console.log("Collapse Clicked");
+    
     const messages = getMessages();
 
-    if (messages.length < 60) return;
+    console.log("Total messages:",messages.length); //added logs for debugging
+
+    if (messages.length < 60) {
+        console.log("Not enough messages to collapse");
+        return;
+    };
 
     const keep = 40;
 
@@ -24,6 +29,7 @@ function collapseMessages() {
 }
 
 function expandMessages() {
+    console.log("Expand clicked");
     const messages = getMessages();
 
     messages.forEach(m => {
