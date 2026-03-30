@@ -3,27 +3,30 @@ let observer = null;
 let debounceTimer = null;
 
 function getMessages() {
-    return document.querySelectorAll('[data-message-author-role], article');  // searching article tags also 
+    return document.querySelectorAll("article");  // searching article tags also 
 }
 
 function collapseMessages() {
-    console.log("Collapse Clicked");
-    
+    console.log("Collapse clicked");
+
     const messages = getMessages();
 
-    console.log("Total messages:",messages.length); //added logs for debugging
-
-    if (messages.length < 10) {      //reduced the number of messages from 60 to 10
-        
-        console.log("Not enough messages to collapse");
-        return;
-    };
-
-    const keep = 40;
+    const keep = 5; // for testing
 
     for (let i = 0; i < messages.length - keep; i++) {
-        messages[i].classList.add("chatgpt-collapsed");
+
+        const msg = messages[i];
+
+        // Find actual visible container
+        const container = msg.closest("article");
+
+        if (container) {
+            container.style.display = "none";
+        }
     }
+
+
+
 
     collapsed = true;
     updateCounter();
@@ -31,10 +34,10 @@ function collapseMessages() {
 
 function expandMessages() {
     console.log("Expand clicked");
-    const messages = getMessages();
+    const articles = document.querySelectorAll("article");
 
-    messages.forEach(m => {
-        m.classList.remove("chatgpt-collapsed");
+    articles.forEach(a => {
+        a.style.display = "";
     });
 
     collapsed = false;
